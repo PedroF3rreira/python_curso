@@ -11,6 +11,11 @@ bancos.insert(2, 'primeiro banco')
 #removendo um item
 bancos.remove('banco do sul')
 
+#coloca na ordem alfabetica
+bancos.sort()
+
+print(bancos)
+
 print(len(bancos))
 
 
