@@ -1,3 +1,3 @@
 # função anonima
-a = lambda x: x
-print(a(2))
+lamb = lambda x: x
+print(lamb(2))
