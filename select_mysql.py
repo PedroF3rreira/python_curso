@@ -9,20 +9,15 @@ db_credentials = {
 }
 
 try:
-    nome = input("Digite um nome de usuário ")
-    email = input("Digite seu email de usuário ")
-    email_confirma = input("Digite novamente seu email ")
-
     conn = mysql.connector.connect(**db_credentials)
     cursor = conn.cursor()  # cria um cursorpara executar a query
+    query = "select name, email from users "
+    cursor.execute(query)
 
-    if email == email_confirma:
-        query = (f"insert into users (name, email) values (%s, %s)")
-        usuario = (nome, email)
-        cursor.execute(query, usuario)  # executa a query
-        conn.commit()  # confirma a alteração no banco de dados
-    else:
-        print("Email não são idênticos")
+    for (name, email) in cursor:
+        print(f"{name.ljust(22)} ->  {email.rjust(14)}")
+
+
 except mysql.connector.Error as erro:
     if erro.errno == errorcode.ER_ACCESS_DENIED_ERROR:
         print("verifique sua senha")
