@@ -16,8 +16,7 @@ try:
 
     for (name, email) in cursor:
         print(f"{name.ljust(22)} ->  {email.rjust(14)}")
-
-
+        
 except mysql.connector.Error as erro:
     if erro.errno == errorcode.ER_ACCESS_DENIED_ERROR:
         print("verifique sua senha")
