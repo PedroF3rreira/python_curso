@@ -52,13 +52,12 @@ def cadastrar():
                 query = "insert into contatos (nome, telefone, celular) values (%s, %s, %s)"
                 cursor.execute(query, contato)
                 conn.commit()
+                cursor.close()
+                conn.close()
             except:
                 print("um erro ocorreu")
             else:
                 print("Cadastro realizado com sucesso!")
-            finally:
-                cursor.close()
-                conn.close()
         else:
             input("cadastro cancelado\n pressione qualquer tecla para voltar ao menu principal")
     else:
@@ -81,6 +80,7 @@ def pesquisar_id(id=""):
         alterar_contato(contato)
     except:
         print("erro")
+        alterar()
 
 
 def pesquisar_nome(nome=""):
@@ -105,7 +105,7 @@ def pesquisar_nome(nome=""):
     except Exception as err:
         print("ocorreu um erro na busca", err)
         print("pressione qualquer tecla para voltar ao menu... ")
-
+        alterar()
 
 def pesquisar_telefone(telefone=""):
     try:
@@ -129,7 +129,7 @@ def pesquisar_telefone(telefone=""):
     except Exception as err:
         print("ocorreu um erro na busca", err)
         print("pressione qualquer tecla para voltar ao menu... ")
-
+        alterar()
 
 
 def pesquisar_celular(celular=""):
@@ -155,7 +155,7 @@ def pesquisar_celular(celular=""):
     except Exception as err:
         print("ocorreu um erro na busca", err)
         print("pressione qualquer tecla para voltar ao menu... ")
-
+        alterar()
 
 def alterar_contato(contato):
     nome = input("digite novo nome para o contato: ")
@@ -179,9 +179,51 @@ def alterar_contato(contato):
             print("error", err)
     else:
         input("operação foi cancelada\nPresione uma tecla para voltar ao menu")
-    alterar()
+        alterar()
 
 
+def listar():
+    try:
+        query = "select * from contatos"
+        conn = mysql.connector.connect(**dados)
+        cursor = conn.cursor()
+        cursor.execute(query)
+
+        print("****************Contatos********************")
+        for id, nome, celular, telefone in cursor:
+            print(f"*       nome: {nome}")
+            print(f"*       telefone: {telefone}")
+            print(f"*       celular: {celular}\n")
+        print("********************************************")
+        cursor.close()
+        conn.close()
+        input("pressione uma tecla para voltar ao menu principal...")
+    except Exception as err:
+        print("ocorreu um erro ", err)
+    menu_principal()
+
+
+def deletar(id=""):
+    try:
+        if not id:
+            id = input("digite o id do contato: ")
+        query = f"delete from contatos where id = '{id}'"
+        conn = mysql.connector.connect(**dados)
+        cursor = conn.cursor()
+        cursor.execute(query)
+
+        confirma = input("REALMENTE DESEJA DELETAR ESSE CONTATO? S/N")
+
+        if confirma.lower() == 's':
+            conn.commit()
+        else:
+            input("Operação cancelada\npressione qualquer tecla para voltar ao menu principal")
+        cursor.close()
+        conn.close()
+    except Exception as err:
+        print("um erro cocorreu ", err)
+        print("pressione qualquer tecla para voltar ao menu principal")
+    menu_principal()
 
 #funçoes de apresentação
 def messagem_menu_principal():
@@ -194,6 +236,7 @@ def messagem_menu_principal():
     print("*        2 - ALTERAR UM CONTATO                  *")
     print("*        3 - LISTAR CONTATOS                     *")
     print("*        4 - EXPORTAR CONTATOS                   *")
+    print("*        5 - DELETAR CONTATO                     *")
     print("*        0 - SAIR DO SISTEMA                     *")
     print("**************************************************")
 
@@ -231,16 +274,17 @@ def menu_principal():
 acoes_menu_principal = {
     '1': cadastrar,
     '2': alterar,
-    #'3': listar,
+    '3': listar,
     #'4': exportar,
+    '5': deletar,
     '0': sair
 }
 
 acoes_menu_alterar = {
     '1': pesquisar_id,
     '2': pesquisar_nome,
-    '3': pesquisar_celular,
-    '4': pesquisar_telefone,
+    '3': pesquisar_telefone,
+    '4': pesquisar_celular,
     '0': menu_principal
 }
 
