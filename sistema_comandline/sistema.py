@@ -203,6 +203,32 @@ def listar():
     menu_principal()
 
 
+def exportar():
+    try:
+        nome_arquivo = input("Digite o nome do arquivo ")
+
+        conn = mysql.connector.connect(**dados)
+        cursor = conn.cursor()
+        query = "select * from contatos order by id desc"
+        cursor.execute(query)
+
+        contatos = []
+        for id, nome, celular, telefone in cursor:
+            contatos.append({'id': id, 'nome': nome, 'celular': celular, 'telefone': telefone})
+        cursor.close()
+        conn.close()
+
+        with open(nome_arquivo+".txt", 'w', encoding="utf-8") as file:
+            for contato in contatos:
+                registros = []
+                registros.append(f"{contato['id']};{contato['nome']};{contato['celular']};"
+                                 f"{contato['telefone']}\n")
+                file.writelines(registros)
+
+            input("Exportação realizada com sucesso!\npressione qualquer tecla para ir ao menu")
+    except Exception as err:
+        print(err)
+    menu_principal()
 def deletar(id=""):
     try:
         if not id:
@@ -275,7 +301,7 @@ acoes_menu_principal = {
     '1': cadastrar,
     '2': alterar,
     '3': listar,
-    #'4': exportar,
+    '4': exportar,
     '5': deletar,
     '0': sair
 }
